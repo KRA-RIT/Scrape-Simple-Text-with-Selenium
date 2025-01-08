@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 import time
 
 def get_driver():
@@ -12,18 +13,21 @@ def get_driver():
   options.add_argument('disable-blink-features=AutomationControlled')
   
   driver = webdriver.Chrome(options=options)
-  driver.get('https://automated.pythonanywhere.com/')
+  driver.get('https://automated.pythonanywhere.com/login/')
   return driver
-
-def clean_text(text):
-  """Extract only the temperature from text"""
-  output = float(text.split(": ")[1])
-  return output
 
 def main():
   driver = get_driver()
+
+  # Find and fill in username and password
+  driver.find_element(by='id', value='id_username').send_keys('automated')
   time.sleep(2)
-  element = driver.find_element(by='xpath', value='/html/body/div[1]/div/h1[2]')
-  return clean_text(element.text)
+  driver.find_element(by='id', value='id_password').send_keys('automatedautomated' + Keys.RETURN)
+  time.sleep(2)
+
+  # Click on home link and wait 2 seconds
+  driver.find_element(by='xpath', value='/html/body/nav/div/a').click()
+  time.sleep(2)
+  print(driver.current_url)
 
 print(main())
